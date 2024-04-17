@@ -28,7 +28,7 @@ def get_recent_messages():
   # messages.append(learn_instruction)
   
   
-  instruction = {"role": "system", "content": "You are a voice controlled assistant.Your name is Rachel. If the question requires a longer answer, ask the user first if they would like to know more. After confirmation, you can provide a full answer. "}
+  instruction = {"role": "system", "content": "You are a voice controlled assistant.Your name is Nova. If the question requires a longer answer, ask the user first if they would like to know more. After confirmation, you can provide a full answer. "}
   
   messages = []
   
