@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 import dotenv
 dotenv.load_dotenv()
 import os
@@ -22,10 +22,14 @@ def get_flight_info(origin, destination):
     
     return flights[0]["departure_time"] if flights else "No flights available"
 
-def get_cheapest_flight(from_city, to_city, depart_date):
+def get_cheapest_flight(from_city, to_city):
     url = "https://skyscanner80.p.rapidapi.com/api/v1/flights/search-one-way"
 
-    querystring = {"fromId":"eyJzIjoiTEFYQSIsImUiOiIyNzUzNjIxMSIsImgiOiIyNzUzNjIxMSJ9=","toId":"eyJzIjoiTE9ORCIsImUiOiIyNzU0NDAwOCIsImgiOiIyNzU0NDAwOCJ9","departDate":"2024-04-18","adults":"1","currency":"USD","market":"US","locale":"en-US"}
+    from_id = find_airport_id(from_city)
+    to_id = find_airport_id(to_city)
+    depart_date = datetime.now(UTC).strftime("%Y-%m-%d")
+
+    querystring = {"fromId":from_id,"toId":to_id,"departDate":depart_date,"adults":"1","currency":"USD","market":"US","locale":"en-US"}
 
     headers = {
 	    "X-RapidAPI-Key": "dcdc53af85msh365c2e7df63f3a1p1c1125jsn09a2b383ea11",
@@ -54,8 +58,5 @@ def find_airport_id(city):
 
     return requests.get(url, headers=headers, params=querystring).json()["data"][0]["id"]
     
-
-
-print(find_airport_id("oslo").json())
 
 

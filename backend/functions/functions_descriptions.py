@@ -46,20 +46,16 @@ descriptions = [
                 "properties": {
                     "origin": {
                         "type": "string",
-                        "description": "The departure airport, e.g. DUS",
+                        "description": "The departure city, e.g. Hamburg",
                     },
                     "destination": {
                         "type": "string",
-                        "description": "The destination airport, e.g. HAM",
-                    },
-                    "depart_date": {
-                        "type": "string",
-                        "description": "The departure date in the format YYYY-MM-DD",
+                        "description": "The destination city, e.g. Berlin",
                     },
                 },
                 "required": ["origin", "destination"],
             },
-            "returns": "The flight information between the two locations."
+            "returns": "The cheapest flight between the two locations."
         }
     },
 ]

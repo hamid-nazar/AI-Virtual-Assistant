@@ -89,9 +89,8 @@ def chat(message):
     
     print(output)
     
-    function_to_call = output.tool_calls[0]
-    
-    if function_to_call:
+    if output.tool_calls:
+        function_to_call = output.tool_calls[0]
         function_name = function_to_call.function.name
         
         if function_name == "get_local_time":
@@ -113,9 +112,6 @@ def chat(message):
           return response
           
         elif function_name == "get_flight_info":
-
-          
-          params = json.loads(output.tool_calls[0].function.arguments)
           
           print("GPT: called function " + function_name)
           
@@ -124,15 +120,31 @@ def chat(message):
           
           chosen_function = eval(function_name)
           
-          flight = chosen_function(origin, destination)
+          cheapest_flight = chosen_function(origin, destination)
           
-          messages.append({"role": "function", "name": function_name, "content": flight})
+          messages.append({"role": "function", "name": function_name, "content": cheapest_flight})
           
           response = fix_format(messages)
           
           return response
-          
         
+        elif function_name == "get_cheapest_flight":
+          
+          print("GPT: called function " + function_name)
+          
+          origin = json.loads(output.tool_calls[0].function.arguments).get("origin")
+          destination = json.loads(output.tool_calls[0].function.arguments).get("destination")
+          
+          chosen_function = eval(function_name)
+          
+          cheapest_flight = chosen_function(origin, destination)
+          
+          messages.append({"role": "function", "name": function_name, "content": cheapest_flight})
+          
+          response = fix_format(messages)
+          
+          return response
+           
     
     else:
         print("Function does not exist")
