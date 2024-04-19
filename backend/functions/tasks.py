@@ -5,6 +5,8 @@ import os
 from pyflightdata import FlightData
 import requests
 import json
+import python_weather
+import asyncio
 
 def get_local_time():
     return datetime.now().strftime("day/month: %d/%m clock: %H:%M:%S")
@@ -22,11 +24,11 @@ def get_flight_info(origin, destination):
     
     return flights[0]["departure_time"] if flights else "No flights available"
 
-def get_cheapest_flight(from_city, to_city):
+def get_cheapest_flight(origin, destination):
     url = "https://skyscanner80.p.rapidapi.com/api/v1/flights/search-one-way"
 
-    from_id = find_airport_id(from_city)
-    to_id = find_airport_id(to_city)
+    from_id = find_airport_id(origin)
+    to_id = find_airport_id(destination)
     depart_date = datetime.now(UTC).strftime("%Y-%m-%d")
 
     querystring = {"fromId":from_id,"toId":to_id,"departDate":depart_date,"adults":"1","currency":"USD","market":"US","locale":"en-US"}
@@ -58,5 +60,10 @@ def find_airport_id(city):
 
     return requests.get(url, headers=headers, params=querystring).json()["data"][0]["id"]
     
-
+async def get_weather(city):
+    async with python_weather.Client() as client:
+        
+        weather = await client.get(city)
+        
+        return "Precipitation: " + str(weather.precipitation) + "mm, temperature: " + str(weather.temperature) + "C, humidity: " + str(weather.humidity) + "%, wind speed: " + str(weather.wind_speed) + "kph, description: " + weather.description
 

@@ -4,7 +4,7 @@ import whisper
 import os
 import json
 import datetime
-from functions.tasks import get_local_time, get_flight_info
+from functions.tasks import get_local_time, get_flight_info, get_cheapest_flight, get_weather
 from functions.database import get_recent_messages
 from functions.functions_descriptions import descriptions
 
@@ -145,7 +145,23 @@ def chat(message):
           
           return response
            
-    
+        elif function_name == "get_weather":
+          
+          print("GPT: called function " + function_name)
+          
+          city = json.loads(output.tool_calls[0].function.arguments).get("city")
+          
+          chosen_function = eval(function_name)
+          
+          weather = chosen_function(city)
+          
+          messages.append({"role": "function", "name": function_name, "content": weather})
+          
+          response = fix_format(messages)
+          
+          return response
+        
+        
     else:
         print("Function does not exist")
         print("GPT: " + response.choices[0].message.content)
