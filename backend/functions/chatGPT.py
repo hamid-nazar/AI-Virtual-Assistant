@@ -1,17 +1,12 @@
-import base64
-import io
 import openai
-from decouple import config
 import dotenv
 import whisper
 import os
 import json
-import numpy as np
-import soundfile as sf
 import datetime
-
-from functions.database import get_recent_messages, store_messages
-from functions.functions_descriptions import descriptions, function_description_get_flight_info
+from functions.tasks import get_local_time, get_flight_info
+from functions.database import get_recent_messages
+from functions.functions_descriptions import descriptions
 
 dotenv.load_dotenv()
 
@@ -85,8 +80,8 @@ def chat(message):
     response = openai_client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=messages,
-    functions=descriptions,
-    function_call="auto",)
+    tools=descriptions,
+    tool_choice="auto",)
 
     print(response)
     
@@ -94,25 +89,23 @@ def chat(message):
     
     print(output)
     
-    function_call = output.function_call
+    function_to_call = output.tool_calls[0]
     
-    
-    if function_call:
-        
-        function_name = function_call.name
+    if function_to_call:
+        function_name = function_to_call.function.name
         
         if function_name == "get_local_time":
           
-          print("GPT: called function ",function_call.name)
+          print("GPT: called function ", function_name)
         
             
-          chosen_function = eval(function_call.name)
+          chosen_function = eval(function_name)
             
             
           time = chosen_function()
           
           
-          messages.append({"role": "function", "name": output.function_call.name, "content": time})
+          messages.append({"role": "function", "name": function_name, "content": time})
         
     
           response = fix_format(messages)
@@ -122,22 +115,20 @@ def chat(message):
         elif function_name == "get_flight_info":
 
           
-          params = json.loads(output.function_call.arguments)
+          params = json.loads(output.tool_calls[0].function.arguments)
           
-          print("GPT: called function " +function_call.name)
+          print("GPT: called function " + function_name)
           
-          origin = json.loads(output.function_call.arguments).get("loc_origin")
-          destination = json.loads(output.function_call.arguments).get("loc_destination")
-          
+          origin = json.loads(output.tool_calls[0].function.arguments).get("origin")
+          destination = json.loads(output.tool_calls[0].function.arguments).get("destination")
           
           chosen_function = eval(function_name)
           
           flight = chosen_function(origin, destination)
           
-          messages.append({"role": "function", "name": output.function_call.name, "content": flight})
+          messages.append({"role": "function", "name": function_name, "content": flight})
           
           response = fix_format(messages)
-          
           
           return response
           
@@ -147,7 +138,7 @@ def chat(message):
         print("Function does not exist")
         print("GPT: " + response.choices[0].message.content)
         
-        return response.choices[0].message.content;
+        return response.choices[0].message.content
       
       
       
@@ -158,24 +149,25 @@ def fix_format(messages):
     response = openai_client.chat.completions.create(
     model="gpt-3.5-turbo-0613",
     messages=messages,
-    functions=descriptions,
-    function_call="auto",)
+    tools=descriptions,
+    tool_choice="auto",)
             
     response = response.choices[0].message.content
     print("GPT: " + response)
     
     return response
-      
-def get_local_time():
+
+
+""" def get_local_time():
   
   current_time = datetime.datetime.now()
   
-  return current_time.strftime("%H:%M")
+  return current_time.strftime("%H:%M") """
   
   
   
-def get_flight_info(origin, destination):
-    """Get flight information between two locations."""
+""" def get_flight_info(origin, destination):
+    Get flight information between two locations.
 
     # Example output returned from an API or database
     flight_info = {
@@ -186,7 +178,7 @@ def get_flight_info(origin, destination):
         "flight": "KL643",
     }
 
-    return json.dumps(flight_info)
+    return json.dumps(flight_info) """
   
   
   
