@@ -39,6 +39,26 @@ descriptions = [
     {
         "type": "function",
         "function": {
+            "name": "get_weather",
+            "description": "Get weather in a city.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "type": "string",
+                        "description": "The city to get the weather for, e.g. Hamburg",
+                    },
+                },
+                "required": ["city"],
+            },
+            "returns": "The weather in the city."
+        }
+    },
+]
+
+""" {
+        "type": "function",
+        "function": {
             "name": "get_cheapest_flight",
             "description": "Get cheapest flight between two locations.",
             "parameters": {
@@ -57,23 +77,4 @@ descriptions = [
             },
             "returns": "The cheapest flight between the two locations."
         }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "get_weather",
-            "description": "Get weather in a city.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "city": {
-                        "type": "string",
-                        "description": "The city to get the weather for, e.g. Hamburg",
-                    },
-                },
-                "required": ["city"],
-            },
-            "returns": "The weather in the city."
-        }
-    },
-]
+}, """

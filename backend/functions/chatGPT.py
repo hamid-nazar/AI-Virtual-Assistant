@@ -3,7 +3,6 @@ import dotenv
 import whisper
 import os
 import json
-import datetime
 from functions.tasks import get_local_time, get_flight_info, get_cheapest_flight, get_weather
 from functions.database import get_recent_messages
 from functions.functions_descriptions import descriptions
