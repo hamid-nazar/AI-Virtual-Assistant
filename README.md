@@ -39,7 +39,7 @@
 
 ### Run The Application
 
-    uvicorn main_2:app --reload
+    uvicorn main:app --reload
 
 ## Backend Structure
 
