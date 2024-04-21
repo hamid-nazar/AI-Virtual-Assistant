@@ -54,6 +54,62 @@ descriptions = [
             "returns": "The weather in the city."
         }
     },
+    {
+    "type": "function",
+    "function": {
+        "name": "remove_reminder",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "reminder_text": {
+                    "type": "string",
+                    "description": "The text of the reminder to remove."
+                                   "runs after list_reminders to show the current reminders."
+                }
+            },
+            "required": ["reminder_text"]
+        }
+    }
+},
+
+{
+    "type": "function",
+    "function": {
+        "name": "add_reminder",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "reminder_text": {
+                    "type": "string",
+                    "description": "The text of the reminder to add."
+                }
+            },
+            "required": ["reminder_text"]
+        }
+    }
+},
+{
+    "type": "function",
+    "function": {
+        "name": "list_reminders",
+        "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        },
+        "description": "Lists all reminders stored in the reminders.txt file, formatted as a single string. runs before"
+                       "each delete reminder function call to show the current reminders."
+    }
+}
+
+
+,
+
+
+
+
+
+
 ]
 
 """ {

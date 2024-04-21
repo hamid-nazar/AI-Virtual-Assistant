@@ -36,7 +36,7 @@ export function Controller() {
       formData.append('file', blob, 'myFile.wav');
 
 
-      const res = await axios.post('http://localhost:8000/audio', formData,
+      const res = await axios.post('http://localhost:5000/audio', formData,
         {
           headers:
           {

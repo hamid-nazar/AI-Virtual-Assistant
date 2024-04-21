@@ -3,11 +3,24 @@ import dotenv
 import whisper
 import os
 import json
-from functions.tasks import get_local_time, get_flight_info, get_cheapest_flight, get_weather
+from functions.tasks import get_local_time, get_flight_info, get_weather, add_reminder, remove_reminder, list_reminders
 from functions.database import get_recent_messages
 from functions.functions_descriptions import descriptions
 
 dotenv.load_dotenv()
+
+def new_output(messages):
+
+    response = openai_client.chat.completions.create(
+    model="gpt-3.5-turbo-0613",
+    messages=messages,
+    tools=descriptions,
+    tool_choice="auto",)
+            
+    output = response.choices[0].message
+    
+    return output
+
 
 
 
@@ -71,118 +84,67 @@ def get_chat_response(message):
 
 
 def chat(message):
-    #model="gpt-3.5-turbo-0613",
-    messages = get_recent_messages()
+  #model="gpt-3.5-turbo-0613",
+  messages = get_recent_messages()
+  
+  messages.append({"role": "user", "content": message})
+  
+  output = new_output(messages)
+  
+  print(output)
+  print()
+  print()
     
-    messages.append({"role": "user", "content": message})
-    
-    response = openai_client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=messages,
-    tools=descriptions,
-    tool_choice="auto",)
+  while output.tool_calls:
+      function_to_call = output.tool_calls[0]
+      function_name = function_to_call.function.name
 
-    print(response)
-    
-    output = response.choices[0].message
-    
-    print(output)
-    
-    if output.tool_calls:
-        function_to_call = output.tool_calls[0]
-        function_name = function_to_call.function.name
-        
-        if function_name == "get_local_time":
-          
+      if function_name == "get_local_time":
           print("GPT: called function ", function_name)
-        
-            
-          chosen_function = eval(function_name)
-            
-            
-          time = chosen_function()
-          
-          
+          time = get_local_time()
           messages.append({"role": "function", "name": function_name, "content": time})
-        
-    
-          response = fix_format(messages)
-            
-          return response
-          
-        elif function_name == "get_flight_info":
-          
+
+      elif function_name in ["get_flight_info", "get_cheapest_flight"]:
           print("GPT: called function " + function_name)
-          
           origin = json.loads(output.tool_calls[0].function.arguments).get("origin")
           destination = json.loads(output.tool_calls[0].function.arguments).get("destination")
-          
-          chosen_function = eval(function_name)
-          
-          cheapest_flight = chosen_function(origin, destination)
-          
-          messages.append({"role": "function", "name": function_name, "content": cheapest_flight})
-          
-          response = fix_format(messages)
-          
-          return response
-        
-        elif function_name == "get_cheapest_flight":
-          
+          flight_info = get_flight_info(origin, destination) if function_name == "get_flight_info" else get_cheapest_flight(origin, destination)
+          messages.append({"role": "function", "name": function_name, "content": flight_info})
+
+      elif function_name == "get_weather":
           print("GPT: called function " + function_name)
-          
-          origin = json.loads(output.tool_calls[0].function.arguments).get("origin")
-          destination = json.loads(output.tool_calls[0].function.arguments).get("destination")
-          
-          chosen_function = eval(function_name)
-          
-          cheapest_flight = chosen_function(origin, destination)
-          
-          messages.append({"role": "function", "name": function_name, "content": cheapest_flight})
-          
-          response = fix_format(messages)
-          
-          return response
-           
-        elif function_name == "get_weather":
-          
-          print("GPT: called function " + function_name)
-          
           city = json.loads(output.tool_calls[0].function.arguments).get("city")
-          
-          chosen_function = eval(function_name)
-          
-          weather = chosen_function(city)
-          
+          weather = get_weather(city)
           messages.append({"role": "function", "name": function_name, "content": weather})
-          
-          response = fix_format(messages)
-          
-          return response
-        
-        
-    else:
-        print("Function does not exist")
-        print("GPT: " + response.choices[0].message.content)
-        
-        return response.choices[0].message.content
-      
-      
-      
-      
 
-def fix_format(messages):
+      elif function_name == "add_reminder":
+          print("GPT: called function " + function_name)
+          reminder_text = json.loads(output.tool_calls[0].function.arguments).get("reminder_text")
+          reminder = add_reminder(reminder_text)
+          messages.append({"role": "function", "name": function_name, "content": reminder})
 
-    response = openai_client.chat.completions.create(
-    model="gpt-3.5-turbo-0613",
-    messages=messages,
-    tools=descriptions,
-    tool_choice="auto",)
-            
-    response = response.choices[0].message.content
-    print("GPT: " + response)
+      elif function_name == "list_reminders":
+          print("GPT: called function " + function_name)
+          reminders = list_reminders()
+          messages.append({"role": "function", "name": function_name, "content": reminders})
+
+      elif function_name == "remove_reminder":
+          print("GPT: called function " + function_name)
+          reminder_text = json.loads(output.tool_calls[0].function.arguments).get("reminder_text")
+          reminder = remove_reminder(reminder_text)
+          messages.append({"role": "function", "name": function_name, "content": reminder})
+
+      output = new_output(messages)
+
+  return output.content
+
+
+
+
     
-    return response
+      
+      
+
 
 
 """ def get_local_time():

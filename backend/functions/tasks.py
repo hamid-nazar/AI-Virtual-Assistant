@@ -66,3 +66,32 @@ def get_weather(city):
 
     return "Description: " + response["weather"][0]["description"] + ", degrees: " + str(response["main"]["temp"]) + "C, feels like: " + str(response["main"]["feels_like"]) + "C, humidity: " + str(response["main"]["humidity"]) + "%, wind: " + str(response["wind"]["speed"]) + "meters/second"
 
+
+def add_reminder(reminder_text):
+    """Add a reminder and return confirmation."""
+    with open("reminders.txt", "a") as file:
+        file.write(reminder_text + "\n")
+    return f"Reminder added: '{reminder_text}'"  # Ensure this function returns a string
+
+
+
+def remove_reminder(reminder_text):
+    """Remove a reminder from the reminders.txt file."""
+    with open("reminders.txt", "r") as file:
+        lines = file.readlines()
+    
+
+    with open("reminders.txt", "w") as file:
+        for line in lines:
+            if line.strip("\n") != reminder_text:
+                file.write(line)
+
+    return f"Reminder removed: '{reminder_text}'"  # Ensure this function returns a string
+
+
+def list_reminders():
+    """List all reminders in the reminders.txt file."""
+    with open("reminders.txt", "r") as file:
+        reminders = file.readlines()
+
+    return str(reminders)

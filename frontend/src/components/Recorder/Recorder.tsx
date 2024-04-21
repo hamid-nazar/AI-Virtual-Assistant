@@ -40,7 +40,7 @@ export function Recorder() {
       formData.append('file', blob, 'myFile.wav');
 
 
-      const res = await axios.post('http://localhost:8000/audio', formData,
+      const res = await axios.post('http://localhost:5000/audio', formData,
         {
           headers:
           {
@@ -92,8 +92,8 @@ export function Recorder() {
             <source src="ai.mp4" type="video/mp4" />
           </video> */}
         </div>
-        <h1>Rachel</h1>
-        <p>I'm a Virtual Assistant Rachel, How may I help you?</p>
+        <h1>Nova</h1>
+        <p>I'm a Virtual Assistant Nova, How may I help you?</p>
       </div>
       <div className="input cursor-pointer">
         <button className="talk">

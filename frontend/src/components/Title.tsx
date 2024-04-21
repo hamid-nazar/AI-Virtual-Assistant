@@ -13,7 +13,7 @@ export function Title({setMessages, setColor}: Props) {
     async function resetConversation(){
         setIsResetting(true);
 
-        await axios.get('http://localhost:8000/reset')
+        await axios.get('http://localhost:5000/reset')
                 .then(function(response) {
 
                 if (response.status === 200) {
