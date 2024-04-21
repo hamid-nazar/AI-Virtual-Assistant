@@ -76,17 +76,26 @@ def add_reminder(reminder_text):
 
 
 def remove_reminder(reminder_text):
-    """Remove a reminder from the reminders.txt file."""
+    """Remove a reminder from the reminders.txt file, ignoring case differences."""
     with open("reminders.txt", "r") as file:
         lines = file.readlines()
-    
 
+    # Normalize both input and line to lowercase before comparison
+    reminder_text = reminder_text.lower()
     with open("reminders.txt", "w") as file:
+        reminders_removed = 0
         for line in lines:
-            if line.strip("\n") != reminder_text:
+            if line.strip("\n").lower() != reminder_text:
                 file.write(line)
+            else:
+                reminders_removed += 1
 
-    return f"Reminder removed: '{reminder_text}'"  # Ensure this function returns a string
+    # Provide feedback about the operation
+    if reminders_removed > 0:
+        return f"Reminder removed: '{reminder_text}'. Total removed: {reminders_removed}"
+    else:
+        return f"No reminder found that matches: '{reminder_text}'"
+
 
 
 def list_reminders():
