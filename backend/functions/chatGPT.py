@@ -99,6 +99,8 @@ def chat(message):
       function_to_call = output.tool_calls[0]
       function_name = function_to_call.function.name
 
+
+
       if function_name == "get_local_time":
           print("GPT: called function ", function_name)
           time = get_local_time()
@@ -126,12 +128,15 @@ def chat(message):
       elif function_name == "list_reminders":
           print("GPT: called function " + function_name)
           reminders = list_reminders()
+          messages = get_recent_messages()
+
           messages.append({"role": "function", "name": function_name, "content": reminders})
 
       elif function_name == "remove_reminder":
           print("GPT: called function " + function_name)
           reminder_text = json.loads(output.tool_calls[0].function.arguments).get("reminder_text")
           reminder = remove_reminder(reminder_text)
+
           messages.append({"role": "function", "name": function_name, "content": reminder})
 
       output = new_output(messages)
