@@ -128,7 +128,7 @@ def chat(message):
       elif function_name == "list_reminders":
           print("GPT: called function " + function_name)
           reminders = list_reminders()
-          messages = get_recent_messages()
+          #messages = get_recent_messages()
 
           messages.append({"role": "function", "name": function_name, "content": reminders})
 

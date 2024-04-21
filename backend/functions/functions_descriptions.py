@@ -63,7 +63,7 @@ descriptions = [
             "properties": {
                 "reminder_text": {
                     "type": "string",
-                    "description": "The text of the reminder to remove. BUT always runs after list_reminders function call"
+                    "description": "The text of the reminder to remove. Always runs after list_reminders function call"
                 }
             },
             "required": ["reminder_text"]
@@ -96,7 +96,7 @@ descriptions = [
             "properties": {},
             "required": []
         },
-        "description": "Lists all reminders stored in the reminders.txt file. runs before remove_reminder function call if needed",
+        "description": "Lists all reminders stored in the reminders.txt file. runs before remove_reminder function call always",
     }
 }
 
